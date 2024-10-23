@@ -3,42 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>축하 메시지</title>
+    <title>최윤성은 흑인이다</title>
     <style>
+        /* 기본 스타일 */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: black;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            display: inline-block;
+
+        .text {
+            position: absolute;
+            font-weight: bold;
+            font-size: 3rem;
+            animation: rainbowText 0.06s infinite;
         }
-        img {
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            border-radius: 8px;
-        }
-        .message {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
+
+        /* 무지개색 애니메이션 */
+        @keyframes rainbowText {
+            0% { color: red; }
+            16% { color: orange; }
+            32% { color: yellow; }
+            48% { color: green; }
+            64% { color: blue; }
+            80% { color: indigo; }
+            100% { color: violet; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <img src="/KakaoTalk_20240907_151632832.jpg" alt="이미지">
-        <div class="message">
-            축하합니다! 당신은 파키스탄 이민자의 싸대구를 때렸습니다. <br>
-            당장 "윤성아 사랑해!" 라고 외친다면 파키스탄의 가오를 얻을 수 있습니다.
-        </div>
-    </div>
+    <!-- 30개의 텍스트 요소 생성 -->
+    <div id="container"></div>
+
+    <!-- 매우 시끄러운 소리 재생 -->
+    <audio id="audio" autoplay loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+
+    <script>
+        const container = document.getElementById('container');
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // 텍스트 개수
+        const textCount = 30;
+
+        // 텍스트 생성 및 초기 설정
+        for (let i = 0; i < textCount; i++) {
+            const textElement = document.createElement('div');
+            textElement.classList.add('text');
+            textElement.innerText = '최윤성은 흑인이다';
+            textElement.style.left = Math.random() * screenWidth + 'px';
+            textElement.style.top = Math.random() * screenHeight + 'px';
+            container.appendChild(textElement);
+        }
+
+        const texts = document.querySelectorAll('.text');
+
+        // 각 텍스트의 위치 및 속도 설정
+        const textData = Array.from(texts).map(text => ({
+            element: text,
+            posX: Math.random() * screenWidth,
+            posY: Math.random() * screenHeight,
+            velocityX: (Math.random() * 4 - 2),  // X축 이동 속도 (-2 ~ 2)
+            velocityY: (Math.random() * 4 - 2),  // Y축 이동 속도 (-2 ~ 2)
+        }));
+
+        function moveTexts() {
+            textData.forEach(data => {
+                data.posX += data.velocityX;
+                data.posY += data.velocityY;
+
+                // 화면의 좌우 끝에 닿으면 X축 반전
+                if (data.posX + data.element.offsetWidth >= screenWidth || data.posX <= 0) {
+                    data.velocityX = -data.velocityX;
+                }
+
+                // 화면의 상하 끝에 닿으면 Y축 반전
+                if (data.posY + data.element.offsetHeight >= screenHeight || data.posY <= 0) {
+                    data.velocityY = -data.velocityY;
+                }
+
+                // 새로운 위치로 이동
+                data.element.style.left = data.posX + 'px';
+                data.element.style.top = data.posY + 'px';
+            });
+        }
+
+        // 0.01초마다 위치를 업데이트
+        setInterval(moveTexts, 10);
+
+        // 자동 재생 설정 (자동으로 시작되도록 무음으로 플레이 후 소리 활성화)
+        window.addEventListener('load', function () {
+            const audio = document.getElementById('audio');
+            audio.muted = true;  // 먼저 무음으로 플레이 시작
+            audio.play().then(() => {
+                audio.muted = false;  // 이후 소리 활성화
+            }).catch(error => {
+                console.log("자동 재생이 차단되었습니다:", error);
+            });
+        });
+    </script>
 
 </body>
 </html>
